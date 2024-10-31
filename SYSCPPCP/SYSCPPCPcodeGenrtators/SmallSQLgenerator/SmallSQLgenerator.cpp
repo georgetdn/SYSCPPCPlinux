@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
 		return 1;
 	// copy common files
 	std::cout << "Copying Command.cpp." << std::endl;
-	system("copy ..\\TemplatesSmallSQL\\Common.cpp ..\\..\\SmallSQLsource\\Common.cpp");
+	system("cp ../TemplatesSmallSQL/Common.cpp ../../SmallSQLSource/Common.cpp");
 
 	std::cout << std::endl << "Generating SmallSQL.cpp." << std::endl;
 	if (!genSmallSQL(prefixes))
@@ -92,25 +92,25 @@ int main(int argc, char* argv[]) {
 	if (!genProcessDelete(prefixes))
 		return 1;
 	std::cout << "Copying validateDelete.cpp." << std::endl;
-	system("copy ..\\TemplatesSmallSQL\\validateDelete.cpp ..\\..\\SmallSQLsource\\validateDelete.cpp");
+	system("cp ../TemplatesSmallSQL/validateDelete.cpp ../../SmallSQLSource/validateDelete.cpp");
 
 	std::cout << std::endl << "Generating ProcessInsert.cpp." << std::endl;
 	if (!genProcessInsert(prefixes))
 		return 1;
 	std::cout <<  "Copying validateInsert.cpp." << std::endl;
-	system("copy ..\\TemplatesSmallSQL\\validateInsert.cpp ..\\..\\SmallSQLsource\\validateInsert.cpp");
+	system("copy ../TemplatesSmallSQL/validateInsert.cpp ../../SmallSQLSource/validateInsert.cpp");
 
 	std::cout << std::endl << "Generating ProcessUpdate.cpp." << std::endl;
 	if (!genProcessUpdate(prefixes))
 		return 1;
 	std::cout <<  "Copying validateUpdate.cpp." << std::endl;
-	system("copy ..\\TemplatesSmallSQL\\validateUpdate.cpp ..\\..\\SmallSQLsource\\validateUpdate.cpp");
+	system("cp ../TemplatesSmallSQL/validateUpdate.cpp ../../SmallSQLSource/validateUpdate.cpp");
 
 	std::cout << std::endl << "Generating ProcessSelect.cpp." << std::endl;
 	if (!genProcessSelect(prefixes))
 		return 1;
 	std::cout <<  "Copying validateSelect.cpp." << std::endl;
-	system("copy ..\\TemplatesSmallSQL\\validateSelect.cpp ..\\..\\SmallSQLsource\\validateSelect.cpp");
+	system("cp ../TemplatesSmallSQL/validateSelect.cpp ../../SmallSQLSource/validateSelect.cpp");
 
 	std::cout << std::endl << "Generating classes source files." << std::endl;
 	if (!genSources(prefixes))

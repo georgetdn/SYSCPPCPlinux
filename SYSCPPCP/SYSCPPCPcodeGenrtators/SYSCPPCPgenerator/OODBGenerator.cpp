@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstring>
 #include <sstream>
 #include <filesystem> 
 #include <algorithm> 
@@ -45,7 +46,7 @@ int main(int argc, char* argv[])
 	std::string cmmandLn;
 	cmmandLn = "mkdir \"../../SYSCPPCPSource\"";
 	system(cmmandLn.c_str());
-	cmmandLn = "mkdir \"../../SYSCPPCPvcxproj\"";
+	cmmandLn = "mkdir \"../../SYSCPPCPmake\"";
 	system(cmmandLn.c_str());
 
 	std::set<std::string> uniquePrefixes;  // Using set to ensure uniqueness
@@ -89,9 +90,9 @@ int main(int argc, char* argv[])
 		arrayFl.clear();
 		varsFl.clear();
 		structsFl.clear();
-	    headerFl.clear();
-	    sourceFl.clear();
-	    projectFl.clear();
+		headerFl.clear();
+		sourceFl.clear();
+		projectFl.clear();
 
 		loadHeaderTempl();
 		loadSourceTemplate();
@@ -106,10 +107,10 @@ int main(int argc, char* argv[])
 		std::string structs = "../templates/" + recName + "Struct.tmpl";
 		std::string vars = "../templates/" + recName + "Variables.tmpl";
 		std::string header = "../../SYSCPPCPheaders/" + recName + ".h";
-		std::string source = "../../SYSCPPCPsource/" + recName + ".cpp";
-		std::string project = "../../SYSCPPCPvcxproj/" + recName + ".vcxproj";
+		std::string source = "../../SYSCPPCPSource/" + recName + ".cpp";
+		std::string project = "../../SYSCPPCPmake/makefile_" + recName;
 		std::string headerEx = "../SYSCPPCPheaders/" + recName + ".h";
-		std::string sourceEx = "../SYSCPPCPsource/" + recName + ".cpp";
+		std::string sourceEx = "../SYSCPPCPSource/" + recName + ".cpp";
 
 		std::cerr << "Templates used to generate the code:" << std::endl;
 		std::ifstream file;
@@ -218,10 +219,14 @@ int main(int argc, char* argv[])
 		std::string display;
 
 		// Create project direcotry
+std::cout << projectFl;
+                while (projectFl.find("+++ProjectName") != std::string::npos)
+{
+std::cout << std::endl << "*********************************" << std::endl;
+		      projectFl.replace(projectFl.find("+++ProjectName"), strlen("+++ProjectName"), recName);
+}
+std::cout << projectFl;
 
-		projectFl.replace(projectFl.find("+++ProjectName"), strlen("+++ProjectName"), recName);
-		projectFl.replace(projectFl.find("+++Header"), strlen("+++Header"), headerEx);
-		projectFl.replace(projectFl.find("+++Source"), strlen("+++Source"), sourceEx);
 		std::ofstream fileOut(project, std::ios::out | std::ios::trunc);
 		// Check if the file was successfully opened
 		if (!fileOut) {
@@ -235,11 +240,10 @@ int main(int argc, char* argv[])
 			headerFl.replace(headerFl.find("+++NewRecord"), strlen("+++NewRecord"), recName);
 		while (sourceFl.find("+++NewRecord") != std::string::npos)
 			sourceFl.replace(sourceFl.find("+++NewRecord"), strlen("+++NewRecord"), recName);
-
 		headerFl.replace(headerFl.find("+++enums"), strlen("+++enums"), "\r\n" + enumsFl + "\r\n");
 		headerFl.replace(headerFl.find("+++arrays"), strlen("+++arrays"), "\r\n" + arrayFl + "\r\n");
-
 		headerFl.replace(headerFl.find("+++structures"), strlen("+++structures"), structsFl + "\r\n");
+
 		headerFl.replace(headerFl.find("+++variables"), strlen("+++variables"), "\r\n" + varsFl + "\r\n");
 		// recKeys
 		while (varsFl.find("\r") != std::string::npos)
@@ -478,6 +482,8 @@ int main(int argc, char* argv[])
 			std::cerr << "Error: Could not open the file for writing." << std::endl;
 			return 1;
 		}
+                else
+                      std::cerr << "File " << header << "opened for writing." << std::endl;
 
 		// Write the content to the file
 		file6 << headerFl;
@@ -491,6 +497,9 @@ int main(int argc, char* argv[])
 			std::cerr << "Error: Could not open the file for writing." << std::endl;
 			return 1;
 		}
+                else
+                      std::cerr << "File " << source << "opened for writing." << std::endl;
+
 
 		// Write the content to the file
 		file7 << sourceFl;
@@ -499,7 +508,7 @@ int main(int argc, char* argv[])
 		file7.close();
 
 		//build
-		commandLn = "msbuild ../../SYSCPPCPvcxproj/" + recName + ".vcxproj /p:Configuration=Debug /p:Platform=x64";
+		commandLn = "make -C ../../SYSCPPCPmake/ -f makefile_" + recName + " debug";
 		int res = system(commandLn.c_str());
 
 		// Check if the command executed successfully
@@ -510,7 +519,7 @@ int main(int argc, char* argv[])
 			std::cerr << "Build failed with error code: " << res << std::endl;
 			return 1;
 		}
-		commandLn = "msbuild ../../SYSCPPCPvcxproj/" + recName + ".vcxproj /p:Configuration=Release /p:Platform=x64";
+		commandLn = "make -C ../../SYSCPPCPmake/ -f makefile_" + recName + " release";
 		res = system(commandLn.c_str());
 
 		// Check if the command executed successfully
@@ -520,7 +529,7 @@ int main(int argc, char* argv[])
 		else {
 			std::cerr << "Build failed with error code: " << res << std::endl;
 			return 1;
-		}	
+		}
 	}
 
 
@@ -863,9 +872,9 @@ void loadHeaderTempl()
 		"            RecSize = sizeof(DBData);   \n"
 		"            std::string prettyFunction = __FUNCTION__;  //     \n"
 		"            std::string outerClassName = prettyFunction.substr(0, prettyFunction.find(\"::DBData\"));   \n"
-		"            strncpy_s(RecName, sizeof(RecName), outerClassName.c_str(), _TRUNCATE);   \n"
+		"   		 std::strncpy(RecName, outerClassName.c_str(), sizeof(RecName) - 1);\n"
+	        "            RecName[sizeof(RecName) - 1] = 0; // Ensure null termination \n"
 		"            std::memset(reinterpret_cast<char*>(this) + sizeof(RecSize) + REC_NAME_SIZE, 0, sizeof(DBData) - sizeof(RecSize) - REC_NAME_SIZE);      \n"
-
 		"        }   \n"
 		"        int RecSize;  // size of DBData \n"
 		"       char RecName[REC_NAME_SIZE];  // The name of this class \n"
@@ -910,7 +919,8 @@ void loadSourceTemplate()
 		"//   Update the header file accordingly.\n"
 		"+++recKeysDef   \n"
 		"{                                                                   \n"
-		"	strncpy_s(recName, sizeof(recName), data.RecName, _TRUNCATE);    \n"
+		"	std::strncpy(recName, data.RecName, sizeof(recName) - 1); \n"
+	    "   recName[sizeof(recName) - 1] = 0; // Ensure null termination \n"
 		"   data.primaryKey = -1;\n"
 		"}                                                                   \n"
 		"//copy constructor                                                 \n"
@@ -923,9 +933,10 @@ void loadSourceTemplate()
 		"     std::memcpy(&this->data, &other.data, sizeof(DBData));		 \n"
 		"																	 \n"
 		"     // Copy the record name										 \n"
-		"     strncpy_s(this->recName, sizeof(this->recName), other.recName, _TRUNCATE);\n"
-	    "}\n"
-	    "\n"
+		" 	std::strncpy(this->recName, other.recName, sizeof(this->recName) - 1); \n"
+	    "   this->recName[sizeof(this->recName) - 1] = 0; // Ensure null termination \n"
+		"}\n"
+		"\n"
 		"char* +++NewRecord::GetDataAddress(void)       \n"
 		"{                                                \n"
 		"	return reinterpret_cast<char *>(&data);       \n"
@@ -990,172 +1001,61 @@ void loadSourceTemplate()
 void loadProjectTempl()
 {
 	projectFl =
-		"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-		"<Project DefaultTargets=\"Build\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">   \n"
-		"    <PropertyGroup>\n"
-		"       <NoWarn> MSB8028</NoWarn>\n"
-		"    </PropertyGroup> \n"
-
-		"  <ItemGroup Label=\"ProjectConfigurations\">                \n"
-		"    <ProjectConfiguration Include=\"Debug|Win32\">           \n"
-		"      <Configuration>Debug</Configuration>\n"
-		"      <Platform>Win32</Platform>          \n"
-		"    </ProjectConfiguration>               \n"
-		"    <ProjectConfiguration Include=\"Release|Win32\">         \n"
-		"      <Configuration>Release</Configuration>                 \n"
-		"      <Platform>Win32</Platform>          \n"
-		"    </ProjectConfiguration>               \n"
-		"    <ProjectConfiguration Include=\"Debug|x64\">             \n"
-		"      <Configuration>Debug</Configuration>\n"
-		"      <Platform>x64</Platform>            \n"
-		"    </ProjectConfiguration>               \n"
-		"    <ProjectConfiguration Include=\"Release|x64\">           \n"
-		"      <Configuration>Release</Configuration>                 \n"
-		"      <Platform>x64</Platform>            \n"
-		"    </ProjectConfiguration>               \n"
-		"  </ItemGroup>         \n"
-		"  <PropertyGroup Label=\"Globals\">       \n"
-		"    <VCProjectVersion>17.0</VCProjectVersion>                \n"
-		"    <Keyword>Win32Proj</Keyword>          \n"
-		"    <ProjectGuid>{71cd25f1-d323-4e8b-8068-69c9a79dca6b}</ProjectGuid>           \n"
-		"    <RootNamespace>+++ProjectName</RootNamespace>            \n"
-		"    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>           \n"
-		"  </PropertyGroup>     \n"
-		"  <Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />          \n"
-		"  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='Debug|Win32'\" Label=\"Configuration\">                 \n"
-		"    <ConfigurationType>StaticLibrary</ConfigurationType>     \n"
-		"    <UseDebugLibraries>true</UseDebugLibraries>              \n"
-		"    <PlatformToolset>v143</PlatformToolset>                  \n"
-		"    <CharacterSet>Unicode</CharacterSet>  \n"
-		"  </PropertyGroup>     \n"
-		"  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='Release|Win32'\" Label=\"Configuration\">               \n"
-		"    <ConfigurationType>StaticLibrary</ConfigurationType>     \n"
-		"    <UseDebugLibraries>false</UseDebugLibraries>             \n"
-		"    <PlatformToolset>v143</PlatformToolset>                  \n"
-		"    <WholeProgramOptimization>true</WholeProgramOptimization>\n"
-		"    <CharacterSet>Unicode</CharacterSet>  \n"
-		"  </PropertyGroup>     \n"
-		"  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='Debug|x64'\" Label=\"Configuration\">\n"
-		"    <ConfigurationType>StaticLibrary</ConfigurationType>     \n"
-		"    <UseDebugLibraries>true</UseDebugLibraries>              \n"
-		"    <PlatformToolset>v143</PlatformToolset>                  \n"
-		"    <CharacterSet>Unicode</CharacterSet>  \n"
-		"  </PropertyGroup>     \n"
-		"  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='Release|x64'\" Label=\"Configuration\">                 \n"
-		"    <ConfigurationType>StaticLibrary</ConfigurationType>     \n"
-		"    <UseDebugLibraries>false</UseDebugLibraries>             \n"
-		"    <PlatformToolset>v143</PlatformToolset>                  \n"
-		"    <WholeProgramOptimization>true</WholeProgramOptimization>\n"
-		"    <CharacterSet>Unicode</CharacterSet>  \n"
-		"  </PropertyGroup>     \n"
-		"  <Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.props\" />                  \n"
-		"  <ImportGroup Label=\"ExtensionSettings\">                  \n"
-		"  </ImportGroup>       \n"
-		"  <ImportGroup Label=\"Shared\">          \n"
-		"  </ImportGroup>       \n"
-		"  <ImportGroup Label=\"PropertySheets\" Condition=\"'$(Configuration)|$(Platform)'=='Debug|Win32'\">                  \n"
-		"    <Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />       \n"
-		"  </ImportGroup>       \n"
-		"  <ImportGroup Label=\"PropertySheets\" Condition=\"'$(Configuration)|$(Platform)'=='Release|Win32'\">                \n"
-		"    <Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />       \n"
-		"  </ImportGroup>       \n"
-		"  <ImportGroup Label=\"PropertySheets\" Condition=\"'$(Configuration)|$(Platform)'=='Debug|x64'\"> \n"
-		"    <Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />       \n"
-		"  </ImportGroup>       \n"
-		"  <ImportGroup Label=\"PropertySheets\" Condition=\"'$(Configuration)|$(Platform)'=='Release|x64'\">                  \n"
-		"    <Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />       \n"
-		"  </ImportGroup>       \n"
-		"  <PropertyGroup Label=\"UserMacros\" />  \n"
-		"  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='Debug|x64'\">     \n"
-		"    <OutDir>..\\SYSCPPCPlibs\\debug\\</OutDir>               \n"
-		"    <TargetName>$(ProjectName)d</TargetName>                 \n"
-		"    <IntDir>.\\temp\\$(Platform)\\$(Configuration)\\</IntDir>\n"
-		"  </PropertyGroup>     \n"
-		"  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='Release|x64'\">   \n"
-		"    <OutDir>..\\SYSCPPCPlibs\\release\\</OutDir>             \n"
-		"    <IntDir>.\\temp\\$(Platform)\\$(Configuration)\\</IntDir> \n"
-		"  </PropertyGroup>     \n"
-		"  <ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='Debug|Win32'\">                \n"
-		"    <ClCompile>        \n"
-		"      <WarningLevel>Level3</WarningLevel> \n"
-		"      <SDLCheck>true</SDLCheck>           \n"
-		"      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>                 \n"
-		"      <ConformanceMode>true</ConformanceMode>                \n"
-		"      <PrecompiledHeader>NotUsing</PrecompiledHeader>        \n"
-		"      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>   \n"
-		"    </ClCompile>       \n"
-		"    <Link>             \n"
-		"      <SubSystem>      \n"
-		"      </SubSystem>     \n"
-		"      <GenerateDebugInformation>true</GenerateDebugInformation>                 \n"
-		"    </Link>            \n"
-		"  </ItemDefinitionGroup>                  \n"
-		"  <ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='Release|Win32'\">              \n"
-		"    <ClCompile>        \n"
-		"      <WarningLevel>Level3</WarningLevel> \n"
-		"      <FunctionLevelLinking>true</FunctionLevelLinking>      \n"
-		"      <IntrinsicFunctions>true</IntrinsicFunctions>          \n"
-		"      <SDLCheck>true</SDLCheck>           \n"
-		"      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>                 \n"
-		"      <ConformanceMode>true</ConformanceMode>                \n"
-		"      <PrecompiledHeader>NotUsing</PrecompiledHeader>        \n"
-		"      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>   \n"
-		"    </ClCompile>       \n"
-		"    <Link>             \n"
-		"      <SubSystem>      \n"
-		"      </SubSystem>     \n"
-		"      <EnableCOMDATFolding>true</EnableCOMDATFolding>        \n"
-		"      <OptimizeReferences>true</OptimizeReferences>          \n"
-		"      <GenerateDebugInformation>true</GenerateDebugInformation>                 \n"
-		"    </Link>            \n"
-		"  </ItemDefinitionGroup>                  \n"
-		"  <ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='Debug|x64'\">                  \n"
-		"    <ClCompile>        \n"
-		"      <WarningLevel>Level3</WarningLevel> \n"
-		"      <SDLCheck>true</SDLCheck>           \n"
-		"      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>    \n"
-		"      <ConformanceMode>true</ConformanceMode>                \n"
-		"      <PrecompiledHeader>NotUsing</PrecompiledHeader>        \n"
-		"      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>   \n"
-		"      <AdditionalIncludeDirectories>../SYSCPPCPheaders</AdditionalIncludeDirectories>              \n"
-		"    </ClCompile>       \n"
-		"    <Link>             \n"
-		"      <SubSystem>      \n"
-		"      </SubSystem>     \n"
-		"      <GenerateDebugInformation>true</GenerateDebugInformation>                 \n"
-		"    </Link>            \n"
-		"  </ItemDefinitionGroup>                  \n"
-		"  <ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='Release|x64'\">                \n"
-		"    <ClCompile>        \n"
-		"      <WarningLevel>Level3</WarningLevel> \n"
-		"      <FunctionLevelLinking>true</FunctionLevelLinking>      \n"
-		"      <IntrinsicFunctions>true</IntrinsicFunctions>          \n"
-		"      <SDLCheck>true</SDLCheck>           \n"
-		"      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>    \n"
-		"      <ConformanceMode>true</ConformanceMode>                \n"
-		"      <PrecompiledHeader>NotUsing</PrecompiledHeader>        \n"
-		"      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>   \n"
-		"      <AdditionalIncludeDirectories>../SYSCPPCPheaders/</AdditionalIncludeDirectories>             \n"
-		"    \n"
-		"    </ClCompile>       \n"
-		"    <Link>             \n"
-		"      <SubSystem>      \n"
-		"      </SubSystem>     \n"
-		"      <EnableCOMDATFolding>true</EnableCOMDATFolding>        \n"
-		"      <OptimizeReferences>true</OptimizeReferences>          \n"
-		"      <GenerateDebugInformation>true</GenerateDebugInformation>                 \n"
-		"    </Link>            \n"
-		"  </ItemDefinitionGroup>                  \n"
-		"  <ItemGroup>          \n"
-		"    <ClInclude Include=\"+++Header\" />   \n"
-		"  </ItemGroup>         \n"
-		"  <ItemGroup>          \n"
-		"    <ClCompile Include=\"+++Source\" />    \n"
-		"  </ItemGroup>         \n"
-		"  <Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.targets\" />                \n"
-		"  <ImportGroup Label=\"ExtensionTargets\">\n"
-		"  </ImportGroup>       \n"
-		"</Project>             \n";
+"# Makefile for Linux (Ubuntu) Project Converted from Visual Studio Project\n"
+"\n"
+"# Compiler\n"
+"CXX = g++\n"
+"\n"
+"# Compiler flags\n"
+"CXXFLAGS = -Wall -Wextra -std=c++2a\n"
+"DEBUGFLAGS = -g -DDEBUG\n"
+"RELEASEFLAGS = -O2 -DNDEBUG\n"
+"\n"
+"# Directories\n\n"
+"SRCDIR = ../SYSCPPCPSource\n"
+"INCLUDEDIR = ../SYSCPPCPheaders\n"
+"DEBUGDIR = ../SYSCPPCPlibs/debug\n"
+"RELEASEDIR = ../SYSCPPCPlibs/release\n"
+"\n"
+"# Source and object files\n"
+"SRC = $(SRCDIR)/+++ProjectName.cpp\n"
+"OBJ_DEBUG = $(patsubst $(SRCDIR)/%.cpp,$(DEBUGDIR)/%.o,$(SRC))\n"
+"OBJ_RELEASE = $(patsubst $(SRCDIR)/%.cpp,$(RELEASEDIR)/%.o,$(SRC))\n"
+"\n"
+"# Targets\n"
+"TARGET_DEBUG = $(DEBUGDIR)/+++ProjectNamed.a\n"
+"TARGET_RELEASE = $(RELEASEDIR)/+++ProjectName.a\n"
+"\n"
+"# Default target\n"
+".PHONY: all\n"
+"default: debug\n"
+"\n"
+"# Debug target\n"
+"debug: $(TARGET_DEBUG)\n"
+"\n"
+"$(TARGET_DEBUG): $(OBJ_DEBUG)\n"
+"	@mkdir -p $(DEBUGDIR)\n"
+"	ar rcs $@ $^\n"
+"\n"
+"$(DEBUGDIR)/%.o: $(SRCDIR)/%.cpp\n"
+"	@mkdir -p $(DEBUGDIR)\n"
+"	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -I$(INCLUDEDIR) -c $< -o $@\n"
+"\n"
+"# Release target\n"
+"release: $(TARGET_RELEASE)\n"
+"\n"
+"$(TARGET_RELEASE): $(OBJ_RELEASE)\n"
+"	@mkdir -p $(RELEASEDIR)\n"
+"	ar rcs $@ $^\n"
+"\n"
+"$(RELEASEDIR)/%.o: $(SRCDIR)/%.cpp\n"
+"	@mkdir -p $(RELEASEDIR)\n"
+"	$(CXX) $(CXXFLAGS) $(RELEASEFLAGS) -I$(INCLUDEDIR) -c $< -o $@\n"
+"\n"
+"# Clean\n"
+".PHONY: clean\n"
+"clean:\n"
+"	rm -rf $(DEBUGDIR) $(RELEASEDIR)\n";
 
 
 

@@ -12,7 +12,7 @@ bool isNativeType(std::string type);
 
 bool genSources(std::vector<std::string>& prefixes)
 {
-	std::ifstream inputFile("..\\TemplatesSmallSQL\\derClasses.cpp");
+	std::ifstream inputFile("../TemplatesSmallSQL/derClasses.cpp");
 	if (!inputFile) {
 		std::cerr << "Error: Unable to open file for reading." << std::endl;
 		return false;
@@ -294,7 +294,7 @@ bool genSources(std::vector<std::string>& prefixes)
 
 
 		// Write the updated content back to the file
-		std::string outFileName = "..\\..\\SmallSQLsource\\" + prefix + "Der.cpp";
+		std::string outFileName = "../../SmallSQLSource/" + prefix + "Der.cpp";
 		std::ofstream outputFile(outFileName);
 		if (!outputFile) {
 			std::cerr << "Error: Unable to open file for writing." << std::endl;
