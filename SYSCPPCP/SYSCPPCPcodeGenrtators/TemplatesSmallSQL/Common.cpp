@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <vector>
 #include <unordered_map>
-#include <conio.h>  // for _getch()
 #include <iomanip>  // For std::setprecision
 
 extern std::vector<std::vector<std::string>> vecOfVecs;
@@ -296,23 +295,6 @@ bool checkSyntax(std::vector<std::string>& tokens)
         if (tokens.size() < 3 || toUpperCase(tokens[1]) != "FROM"  ) {
             std::cerr << std::endl << "Syntax Error: DELETE expects syntax like 'DELETE FROM class(table) name WHERE condition'." << std::endl << std::endl;
             return false;
-        }
-        if (tokens.size() == 3)
-        {
-            std::cout << std::endl << "Are you sure you want to remove all instances of " << tokens[2] << " from the database? " << std::endl;
-            std::cout << "Press 'C' or 'c' to cancel or any key to continue.  > ";
-            // Get user input
-            char userInput = _getch();
-
-            // Handle user input
-            if (std::tolower(userInput) == 'c') {
-                std::cout << std::endl << std::endl << "Operation canceled by the user." << std::endl << std::endl;
-                return false;
-            }
-            else {
-                std::cout << std::endl << std::endl << "Proceeding with the operation..." << std::endl << std::endl;
-                // You can add the logic for removing the instances here
-            }
         }
         std::unordered_map<std::string, std::vector<std::string>> tables;
         std::vector<std::string> columns;

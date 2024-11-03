@@ -15,7 +15,7 @@ RELEASEDIR = ../release
 # Source and object files
 SRC = common.cpp genCommon.cpp genHeaders.cpp genProcessDeletes.cpp \
       genProcessInsert.cpp genProcessSelect.cpp genProcessUpdate.cpp \
-      genProjectFile.cpp genSmqllSQLcpp.cpp genSourses.cpp \
+      genMakeFile.cpp genSmqllSQLcpp.cpp genSourses.cpp \
       parseTemplates.cpp SmallSQLgenerator.cpp
 OBJ_DEBUG = $(patsubst %.cpp,$(DEBUGDIR)/%.o,$(SRC))
 OBJ_RELEASE = $(patsubst %.cpp,$(RELEASEDIR)/%.o,$(SRC))

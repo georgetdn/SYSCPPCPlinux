@@ -3,7 +3,8 @@
 #include <sstream>
 #include <algorithm>
 #include <vector>
-
+#include <readline/readline.h>
+#include <readline/history.h>
 
 #include "Database.h"
 #include "Record.h"
@@ -33,7 +34,7 @@ int main(int argc, char* argv[])
 	db.Connect(argv[1]);
 
 	std::string input;
-
+        char * in;
 	std::cout << "Welcome to SmalSQL!" << std::endl;
 	std::cout << "Supported commands: DESC, SELECT, INSERT, DELETE, UPDATE, CLS, HELP" << std::endl;
 	std::cout << "'select from dual' supports 'classes', 'count()', 'date', 'dbname' and 'dump' " << std::endl << std::endl;
@@ -41,16 +42,18 @@ int main(int argc, char* argv[])
 	InitializeVector(vecOfVecs);
 	InitializeDesc(vecOfDesc);
 	Record::db->outFile.seekp(0, std::ios::beg);
-	while (true) {
-		std::cout << "SmallSQL> ";
-		std::getline(std::cin, input);
 
+	while (true) {
+                in = readline("SmallSQL> ");
+                input = in;
 		if (input.empty()) {
 			continue;
 		}
 		if (toUpperCase(input) == "EXIT" || toUpperCase(input) == "QUIT" || toUpperCase(input) == "BYE") {
 			break;
 		}
+    
+                add_history(in);
 
 		std::vector<std::string> tokens = split(input);
 

@@ -198,7 +198,7 @@ bool genSources(std::vector<std::string>& prefixes)
 					{
 						if (dataType.find("[") != std::string::npos)
 						{
-							SetValue += Else + " if (col == \"" + value + "\")\n     INIT_STR(data." + value + ", val.c_str())\n";
+							SetValue += Else + " if (col == \"" + value + "\")  {\n     INIT_STR(data." + value + ", val.c_str())\n}\n";
 							Else = "else";
 						}
 						else
@@ -230,7 +230,6 @@ bool genSources(std::vector<std::string>& prefixes)
 					else
 					{ //check if enum and get size
 						bool found = false;
-						size_t i = 0;
 						for (const auto& row : enums) {
 							if (row[0] != prefix)
 								continue;

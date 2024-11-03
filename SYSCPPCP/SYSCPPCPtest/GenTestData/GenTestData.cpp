@@ -26,7 +26,7 @@ std::streampos reco3;
 int main() {
 
 
-	Database db("..\\..\\syscppcp.dat");
+	Database db("../../../../syscppcp.dat");
 	if (!db.IsOpen())
 	{
 
@@ -47,9 +47,18 @@ int main() {
 	rec.data.UM = UnitsOfMeasure::Liter;
 	rec.Insert();
 	rec.Dump();
+	std::cout  << "Testing " <<std::endl;
+        std::cout  <<  rec.data.Bin << std::endl;
+       std::cout << rec.data.Name << std::endl;
+       std::cout << rec.recordDBAddress <<  std::endl;
+      std::cout << rec.data.RecSize   <<  std::endl;
+     std::cout <<  rec.data.RecName   <<  std::endl;
+      std::cout <<  rec.data.primaryKey  <<  std::endl;
+    
 
 
-	/*
+/*
+	
 	Customer rec;
 	rec.data.ID = 1234;
 	rec.data.type = Type::Retail;
@@ -203,7 +212,7 @@ int main() {
 		// retreive the rcord with prKey
 	 //   rec = Record::GetRecordByIndex(prKey);
 	//	r = dynamic_cast<RecordOne*>(rec);
-	*/
+*/	
 	return 0;
 }
 
@@ -1429,3 +1438,4 @@ void CreateTheSimpsonsFamily()
 	dog.Insert();
 
 }
+

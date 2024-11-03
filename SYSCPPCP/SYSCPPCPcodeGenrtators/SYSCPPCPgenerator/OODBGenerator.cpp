@@ -219,13 +219,10 @@ int main(int argc, char* argv[])
 		std::string display;
 
 		// Create project direcotry
-std::cout << projectFl;
                 while (projectFl.find("+++ProjectName") != std::string::npos)
 {
-std::cout << std::endl << "*********************************" << std::endl;
 		      projectFl.replace(projectFl.find("+++ProjectName"), strlen("+++ProjectName"), recName);
 }
-std::cout << projectFl;
 
 		std::ofstream fileOut(project, std::ios::out | std::ios::trunc);
 		// Check if the file was successfully opened
@@ -870,7 +867,7 @@ void loadHeaderTempl()
 		"        DBData()   \n"
 		"        {   \n"
 		"            RecSize = sizeof(DBData);   \n"
-		"            std::string prettyFunction = __FUNCTION__;  //     \n"
+		"            std::string prettyFunction = __PRETTY_FUNCTION__;  //     \n"
 		"            std::string outerClassName = prettyFunction.substr(0, prettyFunction.find(\"::DBData\"));   \n"
 		"   		 std::strncpy(RecName, outerClassName.c_str(), sizeof(RecName) - 1);\n"
 	        "            RecName[sizeof(RecName) - 1] = 0; // Ensure null termination \n"
@@ -1023,8 +1020,8 @@ void loadProjectTempl()
 "OBJ_RELEASE = $(patsubst $(SRCDIR)/%.cpp,$(RELEASEDIR)/%.o,$(SRC))\n"
 "\n"
 "# Targets\n"
-"TARGET_DEBUG = $(DEBUGDIR)/+++ProjectNamed.a\n"
-"TARGET_RELEASE = $(RELEASEDIR)/+++ProjectName.a\n"
+"TARGET_DEBUG = $(DEBUGDIR)/lib+++ProjectNamed.a\n"
+"TARGET_RELEASE = $(RELEASEDIR)/lib+++ProjectName.a\n"
 "\n"
 "# Default target\n"
 ".PHONY: all\n"
@@ -1055,7 +1052,7 @@ void loadProjectTempl()
 "# Clean\n"
 ".PHONY: clean\n"
 "clean:\n"
-"	rm -rf $(DEBUGDIR) $(RELEASEDIR)\n";
+"	find $(DEBUGDIR) $(RELEASEDIR) -type f ! -name 'libSYSCPPCPd.a' ! -name 'libSYSCPPCP.a' -exec rm -f {} +\n";
 
 
 

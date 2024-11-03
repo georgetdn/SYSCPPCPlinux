@@ -8,8 +8,8 @@
 //macro to initialize char [] strings
 // for val use quotes
 #define INIT_STR(varName, val) \
-    strncpy_s(varName, sizeof(varName), val, sizeof(varName) - 1);
-
+    strncpy(varName, val, sizeof(varName) - 1); \
+    varName[sizeof(varName) - 1]  = 0;
 enum class Comp
 {
     Equal,

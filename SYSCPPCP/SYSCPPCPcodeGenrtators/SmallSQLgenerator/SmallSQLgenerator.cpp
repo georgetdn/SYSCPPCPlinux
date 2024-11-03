@@ -78,13 +78,12 @@ int main(int argc, char* argv[]) {
 	if(! parseTemplates(enums,structs,variables, prefixes))
 		return 1;
 	// copy common files
-	std::cout << "Copying Command.cpp." << std::endl;
-	system("cp ../TemplatesSmallSQL/Common.cpp ../../SmallSQLSource/Common.cpp");
+	//std::cout << "Copying Command.cpp." << std::endl;
+	//system("cp ../TemplatesSmallSQL/Common.cpp ../../SmallSQLSource/Common.cpp");
 
 	std::cout << std::endl << "Generating SmallSQL.cpp." << std::endl;
 	if (!genSmallSQL(prefixes))
 		return 1;
-
 	std::cout << std::endl << "Generating header files." << std::endl;
 	if (!genHeaders(prefixes))
 		return 1;
@@ -92,25 +91,25 @@ int main(int argc, char* argv[]) {
 	if (!genProcessDelete(prefixes))
 		return 1;
 	std::cout << "Copying validateDelete.cpp." << std::endl;
-	system("cp ../TemplatesSmallSQL/validateDelete.cpp ../../SmallSQLSource/validateDelete.cpp");
+	system("cp ../TemplatesSmallSQL/ValidateDelete.cpp ../../SmallSQLSource/validateDelete.cpp");
 
 	std::cout << std::endl << "Generating ProcessInsert.cpp." << std::endl;
 	if (!genProcessInsert(prefixes))
 		return 1;
 	std::cout <<  "Copying validateInsert.cpp." << std::endl;
-	system("copy ../TemplatesSmallSQL/validateInsert.cpp ../../SmallSQLSource/validateInsert.cpp");
+	system("cp ../TemplatesSmallSQL/ValidateInsert.cpp ../../SmallSQLSource/validateInsert.cpp");
 
 	std::cout << std::endl << "Generating ProcessUpdate.cpp." << std::endl;
 	if (!genProcessUpdate(prefixes))
 		return 1;
 	std::cout <<  "Copying validateUpdate.cpp." << std::endl;
-	system("cp ../TemplatesSmallSQL/validateUpdate.cpp ../../SmallSQLSource/validateUpdate.cpp");
+	system("cp ../TemplatesSmallSQL/ValidateUpdate.cpp ../../SmallSQLSource/validateUpdate.cpp");
 
 	std::cout << std::endl << "Generating ProcessSelect.cpp." << std::endl;
 	if (!genProcessSelect(prefixes))
 		return 1;
 	std::cout <<  "Copying validateSelect.cpp." << std::endl;
-	system("cp ../TemplatesSmallSQL/validateSelect.cpp ../../SmallSQLSource/validateSelect.cpp");
+	system("cp ../TemplatesSmallSQL/ValidateSelect.cpp ../../SmallSQLSource/validateSelect.cpp");
 
 	std::cout << std::endl << "Generating classes source files." << std::endl;
 	if (!genSources(prefixes))
@@ -124,10 +123,11 @@ int main(int argc, char* argv[]) {
 	if (!genProjectFile(prefixes))
 		return 1;
 	//build
-	cmmandLn = "msbuild ../../SYSCPPCPvcxproj/SmallSQL.vcxproj /p:Configuration=Debug /p:Platform=x64";
-	system(cmmandLn.c_str());
-	cmmandLn = "msbuild ../../SYSCPPCPvcxproj/SmallSQL.vcxproj /p:Configuration=Release /p:Platform=x64";
-	system(cmmandLn.c_str());
-
+        int ret = system("make -C ../../SYSCPPCPmake -f makefile_SQL debug release");
+        if (ret == 0) {
+            std::cout << "Makefile executed successfully." << std::endl;
+        } else {
+            std::cerr << "Error executing Makefile. Return code: " << ret << std::endl;
+        }
 	return 0;
 }
