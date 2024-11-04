@@ -5,7 +5,7 @@
 
 int main() {
 	//Open or create a new database
-	Database db("../../syscppcp.dat"); 
+	Database db("../../../../syscppcp.dat"); 
 	if (!db.IsOpen())
 	{
 		std::cout << "The database " << "../../syscppcp.dat" << " could not be opened. " << std::endl;
