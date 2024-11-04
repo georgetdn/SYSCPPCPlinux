@@ -28,7 +28,7 @@ echo "Running SmallSQLgenerator..."
 ./SmallSQLgenerator
 
 # Build  test
-cd SYSCPPCPtest/GenTestData
+cd ../../SYSCPPCPtest/GenTestData
 make
 cd ../QuickStart
 make
