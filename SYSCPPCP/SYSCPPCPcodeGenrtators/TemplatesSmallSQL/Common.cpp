@@ -204,14 +204,17 @@ void InitializeDesc(std::vector<std::vector<std::string>>& vecOfDesc)
 std::string LoadHelp(void )
 {
     return
-        "Only one class(table) can be used in a query\n"
-        "Maximum of five where clauses.\n"
-        "For empty string or character variables (columns) use \" \""
-        "Except for arrays of char, no arrays can be used in a query\n"
-        "For enumerations, you have to use the item name, not the associated integer value\n"
-        "You are not allowed to change the class variables declarations\n"
-        "Names of classes(tables) and variables(columns) are case-sensitive\n"
-        "No functions are supported in queries\n"
+        "- Only one class(table) can be used in a query\n"
+        "- ORDER BY, GROUP BY, HAVING, LIMIT, UNION are not supported\n"
+        "- No store procedures\n"
+        "- For empty string or character variables (columns) use \" \""
+        "- Floting point variables are displayed in select with only three decimals\n"
+        "- Maximum of five where clauses.\n"
+        "- Except for arrays of char, no arrays can be used in a query\n"
+        "- For enumerations, you have to use the item name, not the associated integer value\n"
+        "- You are not allowed to change the class variables declarations\n"
+        "- Names of classes(tables) and variables(columns) are case-sensitive\n"
+        "- No functions are supported in queries\n"
         "Queries :\n"
         "cls - clear the screen \n"
         "select dbname from dual\n"
@@ -236,7 +239,7 @@ bool checkSyntax(std::vector<std::string>& tokens)
     std::string command = tokens[0];
     std::transform(command.begin(), command.end(), command.begin(), ::toupper); // Make command case-insensitive
     if (command == "CLS") {
-        system("cls");
+        system("clear");
     }
     else if (command == "DESC") {
         if (tokens.size() != 2) {
