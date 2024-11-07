@@ -104,7 +104,8 @@ bool ProcessUpdate(
 		}
 
 		for (size_t i = 0; i < columnValuePair.size(); ++i) {
-			Rec->SetValue(columnValuePair[i][0], columnValuePair[i][1]);
+    		     if (!Rec->SetValue(columnValuePair[i][0], columnValuePair[i][1]))
+				return false;
 		}
 
 		cnt++;
