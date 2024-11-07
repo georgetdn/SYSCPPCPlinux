@@ -2,7 +2,7 @@
 ## Simple Yet Sophisticated C++ Class Persistence or SYSCPPCP ##  
 Store C++ class data in a file and manipulate it programmatically or using SmallSQL(included)  
 ## Requirements:
-Linux (tested on Ubuntu), g++-14, version 14.2.0 compiler, GNU Readline library (installed automatically), 'sudo' for user running the install. Follow the link for [Windows version](https://github.com/georgetdn/SYSCPPCP)
+Linux 64 bits (tested on Ubuntu), g++-14, version 14.2.0 compiler, GNU Readline library (installed automatically), 'sudo' for user running the install. Follow the link for [Windows version](https://github.com/georgetdn/SYSCPPCP)
 ## Installing  
 To install and build the framework and SmallSQL application clone the project go to SYSCPPCP directory in a Bash shell and execute the ./build. You will be prompted to enter your password for sudo to install the GNU Readline library. The build will take about five minutes
 This process will build a framework based on the sample templates from _\SYSCPPCP\SYSCPPCPcodeGenrtators\templates_ .
