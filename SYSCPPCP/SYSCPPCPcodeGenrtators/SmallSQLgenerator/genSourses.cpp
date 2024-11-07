@@ -206,21 +206,77 @@ bool genSources(std::vector<std::string>& prefixes)
 					{
 						if (dataType == "float" || dataType == "double" || dataType == "long double")
 						{
+
 							if (dataType == "float") {
-								SetValue += Else + " if (col == \"" + value + "\")\n     data." + value + " = std::stof(val) ;\n";
+								SetValue += Else + " if (col == \"" + value + "\")\n {\n"
+
+									"         std::string integerPart;\n"
+									"         size_t periodPos = val.find('.');\n"
+									"         if (periodPos != std::string::npos) {\n"
+									"             integerPart = val.substr(0, periodPos);\n"
+									"         }\n"
+									"         else\n"
+									"         {\n"
+									"             integerPart = val;\n"
+									"         }\n"
+									"         if (integerPart.length() > 7)\n"
+									"         {\n"
+									"             std::cout << \"Max value for the integral part of " + value + " is 7.\" << std::endl;\n"
+									"             return false;\n"
+									"         }\n"
+									"         val = integerPart +\".\" + val.substr(periodPos + 1, 5);\n"
+									"         data." + value + " = std::stof(val) ;\n}\n";
 							}
 							else if (dataType == "double") {
-								SetValue += Else + " if (col == \"" + value + "\")\n     data." + value + " = std::stod(val) ;\n";
+								SetValue += Else + " if (col == \"" + value + "\")\n    {\n"
+									"         std::string integerPart;\n"
+									"         size_t periodPos = val.find('.');\n"
+									"         if (periodPos != std::string::npos) {\n"
+									"             integerPart = val.substr(0, periodPos);\n"
+									"         }\n"
+									"         else\n"
+									"         {\n"
+									"             integerPart = val;\n"
+									"         }\n"
+									"         if (integerPart.length() > 15)\n"
+									"         {\n"
+									"             std::cout << \"Max value for the integral part of " + value + " is 15.\" << std::endl;\n"
+									"             return false;\n"
+									"         }\n"
+									"         val = integerPart +\".\" + val.substr(periodPos + 1, 5);\n"
+								   "         data." + value + " = std::stod(val) ;\n   }\n";
 							}
 							else if (dataType == "long double") {
-								SetValue += Else + " if (col == \"" + value + "\")\n     data." + value + " = std::stold(val) ;\n";
+								SetValue += Else + " if (col == \"" + value + "\")\n{\n"
+									"         std::string integerPart;\n"
+									"         size_t periodPos = val.find('.');\n"
+									"         if (periodPos != std::string::npos) {\n"
+									"             integerPart = val.substr(0, periodPos);\n"
+									"         }\n"
+									"         else\n"
+									"         {\n"
+									"             integerPart = val;\n"
+									"         }\n"
+									"         if (integerPart.length() > 15)\n"
+									"         {\n"
+									"             std::cout << \"Max value for the integral part of " + value + " is 15.\" << std::endl;\n"
+									"             return false;\n"
+									"         }\n"
+									"         val = integerPart +\".\" + val.substr(periodPos + 1, 5);\n"
+ 								    "         data." + value + " = std::stold(val) ;\n{\n";
 							}
 						}
 						else
 						{
-							SetValue += Else + " if (col == \"" + value + "\")\n     data." + value + " = std::stoi(val);\n";
+							SetValue += Else + " if (col == \"" + value + "\")\n{\n"
+								"    if (val.length() > 10) \n"
+								"    {\n    std::cout << \"Max length of " + value + " is 10 digits\"\n;\n"
+								"           return false;\n"
+								"     }\n"
+								"    data." + value + " = std::stoi(val);\n} \n";
 						}
 						Else = "else";
+
 					}
 					else
 					{ //check if enum and get size
