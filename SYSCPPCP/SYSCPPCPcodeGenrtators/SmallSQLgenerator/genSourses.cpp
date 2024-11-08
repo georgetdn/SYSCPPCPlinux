@@ -270,7 +270,7 @@ bool genSources(std::vector<std::string>& prefixes)
 						{
 							SetValue += Else + " if (col == \"" + value + "\")\n{\n"
 								"    if (val.length() > 10) \n"
-								"    {\n    std::cout << \"Max length of " + value + " is 10 digits\"\n;\n"
+								"    {\n    std::cout << \"Max length of " + value + " is 10 digits\" << std::endl;\n"
 								"           return false;\n"
 								"     }\n"
 								"    data." + value + " = std::stoi(val);\n} \n";
