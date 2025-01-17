@@ -1,4 +1,4 @@
-___THIS CODE WAS MERGED INTO SYSCPPCP___
+___THIS CODE WAS MERGED INTO  https://github.com/georgetdn/SYSCPPCP___
 # SYSCPPCP #
 ## Simple Yet Sophisticated C++ Class Persistence or SYSCPPCP ##  
 Store C++ class data in a file and manipulate it programmatically or using SmallSQL(included)  
